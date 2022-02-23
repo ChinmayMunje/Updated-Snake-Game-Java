@@ -30,7 +30,6 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     private final int BOARD_HEIGHT = 600;
     private final int DOT_SIZE = 10;
     private final int ALL_DOTS = 900;
-    private final int RAND_POS = 29;
     private final int DELAY = 140;
 
     private final int xPosition[];
@@ -174,9 +173,9 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     }
 
     private void locateNewApple() {
-        int r = (int) (Math.random() * RAND_POS);
+        int r = (int) (Math.random() * 29);
         apple_x_pos = ((r * DOT_SIZE));
-        r = (int) (Math.random() * RAND_POS);
+        r = (int) (Math.random() * 29);
         apple_y_pos = ((r * DOT_SIZE));
     }
 
