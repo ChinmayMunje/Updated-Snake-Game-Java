@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.mycompany.snake.game;
 
 import java.awt.Color;
@@ -20,10 +16,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-/**
- *
- * @author chinm
- */
 public class SnakeGameBoard extends JPanel implements ActionListener{
 
     private final int BOARD_WIDTH = 600;
@@ -76,9 +68,9 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
 
     private void initializeGame() {
         snakeSize = 3;
-        for (int z = 0; z < snakeSize; z++) {
-            xPosition[z] = 50 - z * 10;
-            yPosition[z] = 50;
+        for (int p = 0; p < snakeSize; p++) {
+            xPosition[p] = 50 - p * 10;
+            yPosition[p] = 50;
         }
         locateNewApple();
         gameTimer = new Timer(DELAY, this);
@@ -93,23 +85,17 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     }
     
     private void doDrawing(Graphics g) {
-        
         if (gameON) {
-
             g.drawImage(appleImg, apple_x_pos, apple_y_pos, this);
-
-            for (int z = 0; z < snakeSize; z++) {
-                if (z == 0) {
-                    g.drawImage(headImg, xPosition[z], yPosition[z], this);
+            for (int p = 0; p < snakeSize; p++) {
+                if (p == 0) {
+                    g.drawImage(headImg, xPosition[p], yPosition[p], this);
                 } else {
-                    g.drawImage(BallImg, xPosition[z], yPosition[z], this);
+                    g.drawImage(BallImg, xPosition[p], yPosition[p], this);
                 }
             }
-
             Toolkit.getDefaultToolkit().sync();
-
         } else {
-
             gameOver(g);
         }        
     }
@@ -118,9 +104,7 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
         g.setColor(Color.red);
         g.setFont(new Font("TimesRoman",Font.BOLD,40));
         FontMetrics metrics =  getFontMetrics(g.getFont());
-       
         g.drawString("Game Over", (BOARD_WIDTH-metrics.stringWidth("Game Over"))/2, BOARD_HEIGHT/2);
-
     }
 
     private void checkApple() {
@@ -131,9 +115,9 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     }
 
     private void moveSnake() {
-        for (int z = snakeSize; z > 0; z--) {
-            xPosition[z] = xPosition[(z - 1)];
-            yPosition[z] = yPosition[(z - 1)];
+        for (int p = snakeSize; p > 0; p--) {
+            xPosition[p] = xPosition[(p - 1)];
+            yPosition[p] = yPosition[(p - 1)];
         }
         if (left) {
             xPosition[0] -= DOT_SIZE;
@@ -150,8 +134,8 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     }
 
     private void checkSnakeCollision() {
-        for (int z = snakeSize; z > 0; z--) {
-            if ((z > 4) && (xPosition[0] == xPosition[z]) && (yPosition[0] == yPosition[z])) {
+        for (int p = snakeSize; p > 0; p--) {
+            if ((p > 4) && (xPosition[0] == xPosition[p]) && (yPosition[0] == yPosition[p])) {
                 gameON = false;
             }
         }
@@ -173,10 +157,10 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     }
 
     private void locateNewApple() {
-        int r = (int) (Math.random() * 29);
-        apple_x_pos = ((r * DOT_SIZE));
-        r = (int) (Math.random() * 29);
-        apple_y_pos = ((r * DOT_SIZE));
+        int random = (int) (Math.random() * 29);
+        apple_x_pos = ((random * DOT_SIZE));
+        random = (int) (Math.random() * 29);
+        apple_y_pos = ((random * DOT_SIZE));
     }
 
     @Override
