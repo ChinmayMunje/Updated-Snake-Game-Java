@@ -33,12 +33,12 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     private final int RAND_POS = 29;
     private final int DELAY = 140;
 
-    private final int x[] = new int[ALL_DOTS];
-    private final int y[] = new int[ALL_DOTS];
+    private final int xPosition[];
+    private final int yPosition[];
 
     private int snakeSize;
-    private int apple_x;
-    private int apple_y;
+    private int apple_x_pos;
+    private int apple_y_pos;
 
     private boolean left = false;
     private boolean right = true;
@@ -46,52 +46,44 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     private boolean down = false;
     private boolean gameON = true;
 
-    private Timer timer;
-    private Image ball;
-    private Image apple;
-    private Image head;
+    private Timer gameTimer;
+    private Image BallImg;
+    private Image appleImg;
+    private Image headImg;
 
     public SnakeGameBoard() {
-        
-        initBoard();
+        this.yPosition = new int[ALL_DOTS];
+        this.xPosition = new int[ALL_DOTS];
+        initializeSnakeBoard();
     }
     
-    private void initBoard() {
-
+    private void initializeSnakeBoard() {
         addKeyListener(new UserClickAdapter());
         setBackground(Color.black);
         setFocusable(true);
-
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
-        loadImages();
-        initGame();
+        loadAllImages();
+        initializeGame();
     }
 
-    private void loadImages() {
-
+    private void loadAllImages() {
         ImageIcon ballIcon = new ImageIcon("src/resources/dot.png");
-        ball = ballIcon.getImage();
-
+        BallImg = ballIcon.getImage();
         ImageIcon appleIcon = new ImageIcon("src/resources/apple.png");
-        apple = appleIcon.getImage();
-
+        appleImg = appleIcon.getImage();
         ImageIcon headIcon = new ImageIcon("src/resources/head.png");
-        head = headIcon.getImage();
+        headImg = headIcon.getImage();
     }
 
-    private void initGame() {
-
+    private void initializeGame() {
         snakeSize = 3;
-
         for (int z = 0; z < snakeSize; z++) {
-            x[z] = 50 - z * 10;
-            y[z] = 50;
+            xPosition[z] = 50 - z * 10;
+            yPosition[z] = 50;
         }
-        
-        locateApple();
-
-        timer = new Timer(DELAY, this);
-        timer.start();
+        locateNewApple();
+        gameTimer = new Timer(DELAY, this);
+        gameTimer.start();
     }
 
     @Override
@@ -105,13 +97,13 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
         
         if (gameON) {
 
-            g.drawImage(apple, apple_x, apple_y, this);
+            g.drawImage(appleImg, apple_x_pos, apple_y_pos, this);
 
             for (int z = 0; z < snakeSize; z++) {
                 if (z == 0) {
-                    g.drawImage(head, x[z], y[z], this);
+                    g.drawImage(headImg, xPosition[z], yPosition[z], this);
                 } else {
-                    g.drawImage(ball, x[z], y[z], this);
+                    g.drawImage(BallImg, xPosition[z], yPosition[z], this);
                 }
             }
 
@@ -124,8 +116,6 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     }
 
     private void gameOver(Graphics g) {
-        
-        
         g.setColor(Color.red);
         g.setFont(new Font("TimesRoman",Font.BOLD,40));
         FontMetrics metrics =  getFontMetrics(g.getFont());
@@ -135,120 +125,95 @@ public class SnakeGameBoard extends JPanel implements ActionListener{
     }
 
     private void checkApple() {
-
-        if ((x[0] == apple_x) && (y[0] == apple_y)) {
-
+        if ((xPosition[0] == apple_x_pos) && (yPosition[0] == apple_y_pos)) {
             snakeSize++;
-            locateApple();
+            locateNewApple();
         }
     }
 
-    private void move() {
-
+    private void moveSnake() {
         for (int z = snakeSize; z > 0; z--) {
-            x[z] = x[(z - 1)];
-            y[z] = y[(z - 1)];
+            xPosition[z] = xPosition[(z - 1)];
+            yPosition[z] = yPosition[(z - 1)];
         }
-
         if (left) {
-            x[0] -= DOT_SIZE;
+            xPosition[0] -= DOT_SIZE;
         }
-
         if (right) {
-            x[0] += DOT_SIZE;
+            xPosition[0] += DOT_SIZE;
         }
-
         if (up) {
-            y[0] -= DOT_SIZE;
+            yPosition[0] -= DOT_SIZE;
         }
-
         if (down) {
-            y[0] += DOT_SIZE;
+            yPosition[0] += DOT_SIZE;
         }
     }
 
-    private void checkCollision() {
-
+    private void checkSnakeCollision() {
         for (int z = snakeSize; z > 0; z--) {
-
-            if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
+            if ((z > 4) && (xPosition[0] == xPosition[z]) && (yPosition[0] == yPosition[z])) {
                 gameON = false;
             }
         }
-
-        if (y[0] >= BOARD_HEIGHT) {
+        if (yPosition[0] >= BOARD_HEIGHT) {
             gameON = false;
         }
-
-        if (y[0] < 0) {
+        if (yPosition[0] < 0) {
             gameON = false;
         }
-
-        if (x[0] >= BOARD_WIDTH) {
+        if (xPosition[0] >= BOARD_WIDTH) {
             gameON = false;
         }
-
-        if (x[0] < 0) {
+        if (xPosition[0] < 0) {
             gameON = false;
         }
-        
         if (!gameON) {
-            timer.stop();
+            gameTimer.stop();
         }
     }
 
-    private void locateApple() {
-
+    private void locateNewApple() {
         int r = (int) (Math.random() * RAND_POS);
-        apple_x = ((r * DOT_SIZE));
-
+        apple_x_pos = ((r * DOT_SIZE));
         r = (int) (Math.random() * RAND_POS);
-        apple_y = ((r * DOT_SIZE));
+        apple_y_pos = ((r * DOT_SIZE));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (gameON) {
             checkApple();
-            checkCollision();
-            move();
+            checkSnakeCollision();
+            moveSnake();
         }
-
         repaint();
     }
 
     private class UserClickAdapter extends KeyAdapter {
-
         @Override
         public void keyPressed(KeyEvent e) {
-
             int key = e.getKeyCode();
-
             if ((key == KeyEvent.VK_LEFT) && (!right)) {
                 left = true;
                 up = false;
                 down = false;
             }
-
             if ((key == KeyEvent.VK_RIGHT) && (!left)) {
                 right = true;
                 up = false;
                 down = false;
             }
-
             if ((key == KeyEvent.VK_UP) && (!down)) {
                 up = true;
                 right = false;
                 left = false;
             }
-
             if ((key == KeyEvent.VK_DOWN) && (!up)) {
                 down = true;
                 right = false;
                 left = false;
             }
         }
-    }
-    
+    }   
 }
